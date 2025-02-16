@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Fichaje</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <img src="Logo_Wigwam_Burger.png" alt="Logo Wigwam" class="logo">
+    <div class="container">
+        <h1>Registro de Fichaje</h1>
+        <form id="fichajeForm">
+            <label for="nombre">Nombre del Trabajador:</label>
+            <input type="text" id="nombre" required placeholder="Escribe tu nombre">
+
+            <label for="entrada">Hora de Entrada:</label>
+            <input type="time" id="entrada" required>
+
+            <label for="salida">Hora de Salida:</label>
+            <input type="time" id="salida" required>
+
+            <label for="acumuladas">Horas Acumuladas (Opcional):</label>
+            <input type="text" id="acumuladas" placeholder="hh:mm" pattern="^([0-9]{2}):([0-9]{2})$" title="Formato correcto: hh:mm (ej. 02:30)">
+
+            <button type="submit">Enviar Fichaje</button>
+        </form>
+        <p id="resultado"></p>
+    </div>
+
+    <script>
+        document.getElementById("fichajeForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById("nombre").value.trim();
+            const entrada = document.getElementById("entrada").value;
+            const salida = document.getElementById("salida").value;
+            const acumuladasTexto = document.getElementById("acumuladas").value;
+
+            if (!nombre || !entrada || !salida) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            // Convertir las horas acumuladas de formato hh:mm a decimal
+            const acumuladas = convertirHorasADecimal(acumuladasTexto);
+
+            // Calcular horas trabajadas
+            const horasTrabajadas = calcularHoras(entrada, salida);
+            const horasPrima = calcularHorasNocturnas (entrada, salida);
+            const totalHoras = horasPrima + acumuladas;
+
+            // Crear el mensaje
+            const mensaje = {
+                content: `- **FICHAJE DE ${nombre}**\n- **Entrada:** ${entrada}\n- **Salida:** ${salida}\n- **Horas trabajadas:** ${formatearDecimalAHoras(horasTrabajadas)}\n- **Total acumulado:** ${formatearDecimalAHoras(totalHoras)}`
+            };
+
+            // Webhook de Discord
+            const webhookURL = "https://discord.com/api/webhooks/1340438328872407144/8rzawWcU3QmRfSAqFB9rcNz-WbBu0Oxp3hy5V4iCFdkI8meQAJzq7waYK0Vd6yH2etjD";
+
+            try {
+                const response = await fetch(webhookURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(mensaje),
+                });
+
+                if (response.ok) {
+                    document.getElementById("resultado").textContent = "✅ Fichaje enviado correctamente.";
+                } else {
+                    document.getElementById("resultado").textContent = "❌ Error al enviar el fichaje.";
+                }
+            } catch (error) {
+                console.error("Error al enviar el webhook:", error);
+                document.getElementById("resultado").textContent = "❌ Error al enviar el fichaje.";
+            }
+        });
+
+        // Función para calcular horas trabajadas entre dos horarios
+        function calcularHoras(entrada, salida) {
+            const entradaDate = new Date(`2000-01-01T${entrada}`);
+            const salidaDate = new Date(`2000-01-01T${salida}`);
+
+            if (salidaDate < entradaDate) {
+                salidaDate.setDate(salidaDate.getDate() + 1); // Para manejar cambios de día
+            }
+
+            const diferenciaMs = salidaDate - entradaDate;
+            return diferenciaMs / (1000 * 60 * 60); // Devuelve un número decimal
+        }
+
+       // Función para calcular solo las horas trabajadas entre 18:00 y 05:00 en decimal
+       function calcularHorasNocturnas(entrada, salida) {
+            const entradaDate = new Date(`2000-01-01T${entrada}`);
+            let salidaDate = new Date(`2000-01-01T${salida}`);
+            
+            if (salidaDate < entradaDate) {
+                salidaDate.setDate(salidaDate.getDate() + 1); // Manejar cambio de día
+            }
+            
+            let minutosTrabajados = 0;
+            let current = entradaDate;
+            
+            while (current < salidaDate) {
+                const hora = current.getHours();
+                if (hora >= 18 || hora < 5) {
+                    minutosTrabajados += 1; // Sumar cada minuto trabajado
+                }
+                current.setMinutes(current.getMinutes() + 1);
+            }
+            
+            return minutosTrabajados / 60; // Convertir minutos a horas en formato decimal
+        }
+
+         // Función para convertir hh:mm a decimal SOLO SI ESTÁ ENTRE 18:00 y 05:00
+         function convertirHorasADecimal(horasMinutos) {
+            if (!horasMinutos) return 0;
+            const partes = horasMinutos.split(":");
+            if (partes.length !== 2) return 0;
+
+            const horas = parseInt(partes[0], 10);
+            const minutos = parseInt(partes[1], 10);
+
+            if (isNaN(horas) || isNaN(minutos)) return 0;
+
+            const tiempoEnDecimal = horas + minutos / 60;
+
+            // Solo sumar si está entre 18:00 y 05:00
+            if ((horas >= 18 && horas <= 23) || (horas >= 0 && horas < 5)) {
+                return tiempoEnDecimal;
+            }
+            return 0;
+        }
+
+
+        // Función para convertir decimal a formato hh:mm
+        function formatearDecimalAHoras(decimal) {
+            const horas = Math.floor(decimal);
+            const minutos = Math.round((decimal - horas) * 60);
+            return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+        }
+    </script>
+    <img src="Logo_Wigwam_Burger.png" alt="Logo Wigwam" class="logo2">
+</body>
+</html>

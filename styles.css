@@ -1,0 +1,76 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.container {
+  width: 400px;
+  margin: auto;
+  background: #FFA500;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.logo2 {
+  display: block;
+  margin: 30px auto 0;
+  width: 90%; /* Ocupará el 80% del ancho de la pantalla */
+  max-width: 800px; /* Para limitar el tamaño máximo */
+}
+
+h1 {
+  margin-bottom: 15px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input {
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+button {
+  margin-top: 15px;
+  background-color: #ff5733;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #ff7733;
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+#resultado {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto;
+  width: 200px; /* Ajusta el tamaño según necesites */
+  position: relative;
+  top: 20px;
+}
