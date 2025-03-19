@@ -20,6 +20,7 @@
             color: #fff;
             line-height: 1.6;
             position: relative;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         body::before {
@@ -33,6 +34,22 @@
             background-size: 200px 200px;
             opacity: 0.1;
             z-index: -1;
+        }
+
+        body.light {
+            background: #e0e0e0; /* Gris claro suave */
+            color: #333; /* Texto gris oscuro para contraste */
+        }
+
+        body.light .producto, body.light .carrito-panel, body.light .modal-content {
+            background: #f0f0f0; /* Fondo claro pero no blanco puro */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-color: #d4af37; /* Borde dorado suave */
+        }
+
+        body.light .form-group input, body.light .form-group textarea {
+            background: #fafafa; /* Fondo de inputs más suave */
+            color: #333;
         }
 
         .container {
@@ -84,20 +101,17 @@
             object-fit: cover;
             border-radius: 5px;
             pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+
+        .producto:hover img {
+            transform: scale(1.1);
         }
 
         .producto h3 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            color: #ffd700;
-        }
-
-        .producto:nth-child(1) h3, .producto:nth-child(2) h3 {
-            color: #ff4444; /* Carnes */
-        }
-
-        .producto:nth-child(4) h3, .producto:nth-child(5) h3, .producto:nth-child(6) h3 {
-            color: #00cc00; /* Bebidas */
+            color: #ffd700; /* Todos los nombres en amarillo */
         }
 
         .cantidad-selector {
@@ -159,6 +173,20 @@
             line-height: 20px;
             text-align: center;
             font-size: 12px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 20px;
         }
 
         .carrito-panel {
@@ -280,6 +308,61 @@
             margin-top: 20px;
         }
 
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 4px solid #ffd700;
+            border-top: 4px solid #1a1a1a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .success-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #ffd700;
+            text-align: center;
+            z-index: 1003;
+            animation: slideIn 0.5s ease;
+        }
+
+        body.light .success-panel {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .success-panel i {
+            color: #00cc00;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .success-panel h2 {
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
         footer {
             background: linear-gradient(45deg, #ffd700, #e6c200);
             color: #1a1a1a;
@@ -344,6 +427,14 @@
                 height: 25px;
             }
 
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+
             .modal {
                 display: none !important;
             }
@@ -389,6 +480,11 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -462,6 +558,8 @@
             <span id="cart-count" class="cart-count">0</span>
         </button>
 
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
         <div class="carrito-panel" id="carrito-panel">
             <h2>Carrito de Compras</h2>
             <div id="lista-carrito"></div>
@@ -518,6 +616,17 @@
                 <button onclick="cerrarModal()" style="background-color: #666; margin-left: 10px;">Cancelar</button>
             </div>
         </div>
+
+        <div class="loading-overlay" id="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="success-panel" id="success-panel">
+            <i class="fas fa-check-circle"></i>
+            <h2>¡Pedido Exitoso!</h2>
+            <p>Tu pedido ha sido procesado correctamente.</p>
+            <button onclick="cerrarSuccessPanel()" style="margin-top: 20px;">Volver a comprar</button>
+        </div>
     </div>
 
     <footer>
@@ -549,7 +658,7 @@
             } else {
                 carrito.push({ nombre, precio, cantidad });
             }
-            input.value = 1; // Resetear input tras agregar
+            input.value = 1;
             actualizarCarrito();
 
             const cartButton = document.querySelector('.cart-button');
@@ -634,6 +743,23 @@
             document.getElementById('modal').style.display = 'none';
         }
 
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+            document.querySelector('.theme-toggle').textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+        }
+
+        if (localStorage.getItem('theme') === 'light') toggleTheme();
+
+        function cerrarSuccessPanel() {
+            document.getElementById('success-panel').style.display = 'none';
+        }
+
+        function mostrarSuccessPanel() {
+            document.getElementById('carrito-panel').classList.remove('active');
+            document.getElementById('success-panel').style.display = 'block';
+        }
+
         function enviarPedido() {
             const nombre = document.getElementById('nombre').value.trim();
             const direccion = document.getElementById('direccion').value.trim();
@@ -649,6 +775,8 @@
                 alert('El carrito está vacío');
                 return;
             }
+
+            document.getElementById('loading').style.display = 'flex';
 
             const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
             const total = subtotal - descuentoAplicado;
@@ -704,23 +832,26 @@
             ])
                 .then(responses => {
                     if (responses.every(r => r.ok)) {
-                        alert('Pedido realizado con éxito');
-                        carrito = [];
-                        descuentoAplicado = 0;
-                        codigoActivo = null;
-                        actualizarCarrito();
-                        document.getElementById('nombre').value = '';
-                        document.getElementById('direccion').value = '';
-                        document.getElementById('telefono').value = '';
-                        document.getElementById('nota').value = '';
-                        document.getElementById('codigo-descuento').value = '';
-                        toggleCarrito();
+                        setTimeout(() => {
+                            document.getElementById('loading').style.display = 'none';
+                            carrito = [];
+                            descuentoAplicado = 0;
+                            codigoActivo = null;
+                            actualizarCarrito();
+                            document.getElementById('nombre').value = '';
+                            document.getElementById('direccion').value = '';
+                            document.getElementById('telefono').value = '';
+                            document.getElementById('nota').value = '';
+                            document.getElementById('codigo-descuento').value = '';
+                            mostrarSuccessPanel();
+                        }, 5000); // 5 segundos de carga
                     } else {
                         throw new Error('Error en la respuesta del servidor');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    document.getElementById('loading').style.display = 'none';
                     alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
                 });
         }
@@ -741,6 +872,8 @@
                 return;
             }
 
+            document.getElementById('loading').style.display = 'flex';
+
             const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
             const total = subtotal - descuentoAplicado;
 
@@ -795,23 +928,27 @@
             ])
                 .then(responses => {
                     if (responses.every(r => r.ok)) {
-                        alert('Pedido realizado con éxito');
-                        carrito = [];
-                        descuentoAplicado = 0;
-                        codigoActivo = null;
-                        actualizarCarrito();
-                        document.getElementById('nombre-modal').value = '';
-                        document.getElementById('direccion-modal').value = '';
-                        document.getElementById('telefono-modal').value = '';
-                        document.getElementById('nota-modal').value = '';
-                        document.getElementById('codigo-descuento').value = '';
-                        cerrarModal();
+                        setTimeout(() => {
+                            document.getElementById('loading').style.display = 'none';
+                            carrito = [];
+                            descuentoAplicado = 0;
+                            codigoActivo = null;
+                            actualizarCarrito();
+                            document.getElementById('nombre-modal').value = '';
+                            document.getElementById('direccion-modal').value = '';
+                            document.getElementById('telefono-modal').value = '';
+                            document.getElementById('nota-modal').value = '';
+                            document.getElementById('codigo-descuento').value = '';
+                            cerrarModal();
+                            mostrarSuccessPanel();
+                        }, 5000); // 5 segundos de carga
                     } else {
                         throw new Error('Error en la respuesta del servidor');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    document.getElementById('loading').style.display = 'none';
                     alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
                 });
         }
