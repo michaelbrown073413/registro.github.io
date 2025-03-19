@@ -2,144 +2,819 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Fichaje</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wigwam Burger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/food.png') repeat;
+            background-size: 200px 200px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #ffd700;
+            padding: 20px;
+            text-align: center;
+            color: #1a1a1a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid #e6c200;
+            animation: fadeIn 1s ease;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .catalogo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .producto {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .producto:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .producto img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .producto h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .producto:nth-child(1) h3, .producto:nth-child(2) h3 {
+            color: #ff4444; /* Carnes */
+        }
+
+        .producto:nth-child(4) h3, .producto:nth-child(5) h3, .producto:nth-child(6) h3 {
+            color: #00cc00; /* Bebidas */
+        }
+
+        .cantidad-selector {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .cantidad-selector input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #ffd700;
+            color: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .cart-button {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background: linear-gradient(45deg, #ffd700, #e6c200);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            position: relative;
+        }
+
+        .cart-button:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-button.bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        .cart-button img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .carrito-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: #2d2d2d;
+            padding: 20px;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+            transition: right 0.3s ease-in-out;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .carrito-panel.active {
+            right: 0;
+            animation: slideInRight 0.3s ease-in-out;
+        }
+
+        .carrito-panel h2 {
+            margin-bottom: 20px;
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        .carrito-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #ffd700;
+            animation: slideInItem 0.3s ease;
+        }
+
+        .carrito-item button {
+            background-color: #ff4444;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carrito-item button i {
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 500px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            animation: slideIn 0.3s ease;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ffd700;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #1a1a1a;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ffd700, #e6c200);
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        #confirmar-pedido {
+            background: linear-gradient(45deg, #00cc00, #00b300);
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+        }
+
+        footer {
+            background: linear-gradient(45deg, #ffd700, #e6c200);
+            color: #1a1a1a;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.9em;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 998;
+        }
+
+        @media (max-width: 768px) {
+            .catalogo {
+                display: flex;
+                flex-direction: row;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 0;
+                padding: 0;
+                height: calc(100vh - 140px);
+            }
+
+            .producto {
+                flex: 0 0 100%;
+                height: 100%;
+                scroll-snap-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .producto img {
+                height: 200px;
+                margin-bottom: 15px;
+            }
+
+            .carrito-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .carrito-panel.active {
+                right: 0;
+            }
+
+            .cart-button {
+                bottom: 60px;
+                right: 10px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .cart-button img {
+                width: 25px;
+                height: 25px;
+            }
+
+            .modal {
+                display: none !important;
+            }
+
+            #formulario-entrega {
+                margin-top: 20px;
+            }
+
+            footer {
+                font-size: 0.8em;
+                padding: 5px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInItem {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { right: -400px; }
+            to { right: 0; }
+        }
+
+        @media (max-width: 768px) {
+            @keyframes slideInRight {
+                from { right: -100%; }
+                to { right: 0; }
+            }
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
-<body>
-    <img src="Logo_Wigwam_Burger.png" alt="Logo Wigwam" class="logo">
+<body oncontextmenu="return false;">
+    <header>
+        <div class="logo">
+            <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/Logo_Wigwam_Burger.png" alt="Wigwam Burger">
+        </div>
+    </header>
+
     <div class="container">
-        <h1>Registro de Fichaje</h1>
-        <form id="fichajeForm">
-            <label for="nombre">Nombre del Trabajador:</label>
-            <input type="text" id="nombre" required placeholder="Escribe tu nombre">
+        <section class="catalogo">
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/xxl.png" alt="Hamburguesa XXL">
+                <h3>Hamburguesa XXL</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-hamburguesa-xxl" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Hamburguesa XXL', 15, 'cant-hamburguesa-xxl')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/ternera.png" alt="Hamburguesa de Ternera">
+                <h3>Hamburguesa de Ternera</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-hamburguesa-ternera" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Hamburguesa de Ternera', 15, 'cant-hamburguesa-ternera')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/perrito.png" alt="Perrito Caliente">
+                <h3>Perrito Caliente</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-perrito" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Perrito Caliente', 15, 'cant-perrito')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/Batido_de_fresa.png" alt="Batido de Fresa">
+                <h3>Batido de Fresa</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-batido-fresa" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Batido de Fresa', 15, 'cant-batido-fresa')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/limonada.png" alt="Refresco de Limon">
+                <h3>Refresco de Limon</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-refresco-limon" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Refresco de Limon', 15, 'cant-refresco-limon')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="producto">
+                <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/Gaseosa.png" alt="Gaseosa">
+                <h3>Gaseosa</h3>
+                <p>$15.00</p>
+                <div class="cantidad-selector">
+                    <input type="number" id="cant-gaseosa" min="1" value="1">
+                    <button onclick="agregarAlCarrito('Gaseosa', 15, 'cant-gaseosa')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </section>
 
-            <label for="entrada">Hora de Entrada:</label>
-            <input type="time" id="entrada" required>
+        <button class="cart-button" onclick="toggleCarrito()" aria-label="Abrir carrito">
+            <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/carrito.png" alt="Carrito">
+            <span id="cart-count" class="cart-count">0</span>
+        </button>
 
-            <label for="salida">Hora de Salida:</label>
-            <input type="time" id="salida" required>
+        <div class="carrito-panel" id="carrito-panel">
+            <h2>Carrito de Compras</h2>
+            <div id="lista-carrito"></div>
+            <div class="form-group">
+                <label>Código de Descuento:</label>
+                <input type="text" id="codigo-descuento" placeholder="Ingresa el código">
+                <button onclick="aplicarDescuento()">Aplicar</button>
+            </div>
+            <p>Subtotal: $<span id="subtotal">0.00</span></p>
+            <p>Descuento: $<span id="descuento">0.00</span></p>
+            <p>Total: $<span id="total">0.00</span></p>
+            <div id="formulario-entrega">
+                <h2>Detalles de Entrega</h2>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección de Entrega:</label>
+                    <input type="text" id="direccion" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono (opcional):</label>
+                    <input type="tel" id="telefono">
+                </div>
+                <div class="form-group">
+                    <label for="nota">Nota (opcional):</label>
+                    <textarea id="nota" rows="3"></textarea>
+                </div>
+                <button id="confirmar-pedido" onclick="enviarPedido()">Confirmar Pedido</button>
+            </div>
+        </div>
 
-            <label for="acumuladas">Horas Acumuladas (Opcional):</label>
-            <input type="text" id="acumuladas" placeholder="hh:mm" pattern="^([0-9]{2}):([0-9]{2})$" title="Formato correcto: hh:mm (ej. 02:30)">
-
-            <button type="submit">Enviar Fichaje</button>
-        </form>
-        <p id="resultado"></p>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h2>Detalles de Entrega</h2>
+                <div class="form-group">
+                    <label for="nombre-modal">Nombre:</label>
+                    <input type="text" id="nombre-modal" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion-modal">Dirección de Entrega:</label>
+                    <input type="text" id="direccion-modal" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono-modal">Teléfono (opcional):</label>
+                    <input type="tel" id="telefono-modal">
+                </div>
+                <div class="form-group">
+                    <label for="nota-modal">Nota (opcional):</label>
+                    <textarea id="nota-modal" rows="3"></textarea>
+                </div>
+                <button onclick="enviarPedidoDesdeModal()">Confirmar Pedido</button>
+                <button onclick="cerrarModal()" style="background-color: #666; margin-left: 10px;">Cancelar</button>
+            </div>
+        </div>
     </div>
 
+    <footer>
+        <p>🍔 Wigwam Burger - ¡Sabor que te hace feliz! 🍔</p>
+    </footer>
+
     <script>
-        document.getElementById("fichajeForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        let carrito = [];
+        const webhookUrlPedido = 'https://discord.com/api/webhooks/1340438328872407144/8rzawWcU3QmRfSAqFB9rcNz-WbBu0Oxp3hy5V4iCFdkI8meQAJzq7waYK0Vd6yH2etjD';
+        const webhookUrlFactura = 'https://discord.com/api/webhooks/1350600154507382905/AsBtpWVUMkcAnCTQQ7WDb7GavKmig33Wsho8Tccjhtp-B9P6C4pS8XY1tVPh7g330jkT';
+        let descuentoAplicado = 0;
+        let codigoActivo = null;
+        const CODIGO_DESCUENTO_10 = '5567243';
+        const CODIGO_DESCUENTO_5 = '9867512';
+        const ROLES = '<@&1334330406568464404> <@&1332730297745281076>';
 
-            const nombre = document.getElementById("nombre").value.trim();
-            const entrada = document.getElementById("entrada").value;
-            const salida = document.getElementById("salida").value;
-            const acumuladasTexto = document.getElementById("acumuladas").value;
-
-            if (!nombre || !entrada || !salida) {
-                alert("Por favor, completa todos los campos.");
+        function agregarAlCarrito(nombre, precio, inputId) {
+            const input = document.getElementById(inputId);
+            const cantidad = parseInt(input.value) || 1;
+            if (cantidad <= 0 || isNaN(cantidad)) {
+                alert('Por favor, ingresa una cantidad válida');
+                input.value = 1;
                 return;
             }
 
-            // Convertir las horas acumuladas de formato hh:mm a decimal
-            const acumuladas = convertirHorasADecimal(acumuladasTexto);
+            const itemExistente = carrito.find(item => item.nombre === nombre);
+            if (itemExistente) {
+                itemExistente.cantidad += cantidad;
+            } else {
+                carrito.push({ nombre, precio, cantidad });
+            }
+            input.value = 1; // Resetear input tras agregar
+            actualizarCarrito();
 
-            // Calcular horas trabajadas
-            const horasTrabajadas = calcularHoras(entrada, salida);
-            const horasPrima = calcularHorasNocturnas (entrada, salida);
-            const totalHoras = horasPrima + acumuladas;
+            const cartButton = document.querySelector('.cart-button');
+            cartButton.classList.add('bounce');
+            setTimeout(() => cartButton.classList.remove('bounce'), 500);
+        }
 
-            // Crear el mensaje
-            const mensaje = {
-                content: `- **FICHAJE DE ${nombre}**\n- **Entrada:** ${entrada}\n- **Salida:** ${salida}\n- **Horas trabajadas:** ${formatearDecimalAHoras(horasTrabajadas)}\n- **Total acumulado:** ${formatearDecimalAHoras(totalHoras)}`
+        function eliminarDelCarrito(nombre) {
+            carrito = carrito.filter(item => item.nombre !== nombre);
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            const listaCarrito = document.getElementById('lista-carrito');
+            const subtotalElement = document.getElementById('subtotal');
+            const descuentoElement = document.getElementById('descuento');
+            const totalElement = document.getElementById('total');
+            const cartCount = document.getElementById('cart-count');
+            listaCarrito.innerHTML = '';
+
+            carrito.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'carrito-item';
+                div.innerHTML = `
+                    <span>${item.nombre} (x${item.cantidad})</span>
+                    <div>
+                        <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+                        <button onclick="eliminarDelCarrito('${item.nombre}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                listaCarrito.appendChild(div);
+            });
+
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            if (codigoActivo === CODIGO_DESCUENTO_10) {
+                descuentoAplicado = subtotal * 0.10;
+            } else if (codigoActivo === CODIGO_DESCUENTO_5) {
+                descuentoAplicado = subtotal * 0.05;
+            } else {
+                descuentoAplicado = 0;
+            }
+            const total = subtotal - descuentoAplicado;
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+
+            subtotalElement.textContent = subtotal.toFixed(2);
+            descuentoElement.textContent = descuentoAplicado.toFixed(2);
+            totalElement.textContent = total.toFixed(2);
+            cartCount.textContent = totalItems;
+        }
+
+        function aplicarDescuento() {
+            const codigo = document.getElementById('codigo-descuento').value.trim();
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            
+            if (!subtotal) {
+                alert('El carrito está vacío. Añade productos antes de aplicar un descuento.');
+                return;
+            }
+
+            if (codigo === CODIGO_DESCUENTO_10) {
+                codigoActivo = CODIGO_DESCUENTO_10;
+                descuentoAplicado = subtotal * 0.10;
+                alert('¡Código aplicado! 10% de descuento');
+            } else if (codigo === CODIGO_DESCUENTO_5) {
+                codigoActivo = CODIGO_DESCUENTO_5;
+                descuentoAplicado = subtotal * 0.05;
+                alert('¡Código aplicado! 5% de descuento');
+            } else {
+                codigoActivo = null;
+                descuentoAplicado = 0;
+                alert('Código inválido');
+            }
+            actualizarCarrito();
+        }
+
+        function toggleCarrito() {
+            const carritoPanel = document.getElementById('carrito-panel');
+            carritoPanel.classList.toggle('active');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function enviarPedido() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const nota = document.getElementById('nota').value.trim();
+
+            if (!nombre || !direccion) {
+                alert('Por favor, completa los campos obligatorios (Nombre y Dirección)');
+                return;
+            }
+
+            if (carrito.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const total = subtotal - descuentoAplicado;
+
+            const embedPedido = {
+                content: `${ROLES}`,
+                embeds: [{
+                    title: "🍔 Nuevo Pedido",
+                    color: 0xFFD700,
+                    fields: [
+                        { name: "👤 Cliente", value: nombre, inline: true },
+                        { name: "📍 Dirección", value: direccion, inline: true },
+                        { name: "📞 Teléfono", value: telefono || "No proporcionado", inline: true },
+                        { name: "📝 Nota", value: nota || "Sin nota", inline: false },
+                        { name: "🛒 Productos", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: "Wigwam Burger" }
+                }]
             };
 
-            // Webhook de Discord
-            const webhookURL = "https://discord.com/api/webhooks/1340438328872407144/8rzawWcU3QmRfSAqFB9rcNz-WbBu0Oxp3hy5V4iCFdkI8meQAJzq7waYK0Vd6yH2etjD";
+            const embedFactura = {
+                embeds: [{
+                    title: "📄 Factura",
+                    color: 0x00CC00,
+                    fields: [
+                        { name: "👤 Cliente", value: nombre, inline: true },
+                        { name: "🆔 N° Pedido", value: `${Date.now()}`, inline: true },
+                        { name: "🛒 Desglose", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: "💵 Total a Pagar", value: `$${total.toFixed(2)}`, inline: true }
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: "Wigwam Burger" }
+                }]
+            };
 
-            try {
-                const response = await fetch(webhookURL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(mensaje),
+            const enviarMensaje = (url, embed) => {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embed)
                 });
+            };
 
-                if (response.ok) {
-                    document.getElementById("resultado").textContent = "✅ Fichaje enviado correctamente.";
-                } else {
-                    document.getElementById("resultado").textContent = "❌ Error al enviar el fichaje.";
-                }
-            } catch (error) {
-                console.error("Error al enviar el webhook:", error);
-                document.getElementById("resultado").textContent = "❌ Error al enviar el fichaje.";
-            }
-        });
-
-        // Función para calcular horas trabajadas entre dos horarios
-        function calcularHoras(entrada, salida) {
-            const entradaDate = new Date(`2000-01-01T${entrada}`);
-            const salidaDate = new Date(`2000-01-01T${salida}`);
-
-            if (salidaDate < entradaDate) {
-                salidaDate.setDate(salidaDate.getDate() + 1); // Para manejar cambios de día
-            }
-
-            const diferenciaMs = salidaDate - entradaDate;
-            return diferenciaMs / (1000 * 60 * 60); // Devuelve un número decimal
+            Promise.all([
+                enviarMensaje(webhookUrlPedido, embedPedido),
+                enviarMensaje(webhookUrlFactura, embedFactura)
+            ])
+                .then(responses => {
+                    if (responses.every(r => r.ok)) {
+                        alert('Pedido realizado con éxito');
+                        carrito = [];
+                        descuentoAplicado = 0;
+                        codigoActivo = null;
+                        actualizarCarrito();
+                        document.getElementById('nombre').value = '';
+                        document.getElementById('direccion').value = '';
+                        document.getElementById('telefono').value = '';
+                        document.getElementById('nota').value = '';
+                        document.getElementById('codigo-descuento').value = '';
+                        toggleCarrito();
+                    } else {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
+                });
         }
 
-       // Función para calcular solo las horas trabajadas entre 18:00 y 05:00 en decimal
-       function calcularHorasNocturnas(entrada, salida) {
-            const entradaDate = new Date(`2000-01-01T${entrada}`);
-            let salidaDate = new Date(`2000-01-01T${salida}`);
-            
-            if (salidaDate < entradaDate) {
-                salidaDate.setDate(salidaDate.getDate() + 1); // Manejar cambio de día
+        function enviarPedidoDesdeModal() {
+            const nombre = document.getElementById('nombre-modal').value.trim();
+            const direccion = document.getElementById('direccion-modal').value.trim();
+            const telefono = document.getElementById('telefono-modal').value.trim();
+            const nota = document.getElementById('nota-modal').value.trim();
+
+            if (!nombre || !direccion) {
+                alert('Por favor, completa los campos obligatorios (Nombre y Dirección)');
+                return;
             }
-            
-            let minutosTrabajados = 0;
-            let current = entradaDate;
-            
-            while (current < salidaDate) {
-                const hora = current.getHours();
-                if (hora >= 18 || hora < 5) {
-                    minutosTrabajados += 1; // Sumar cada minuto trabajado
-                }
-                current.setMinutes(current.getMinutes() + 1);
+
+            if (carrito.length === 0) {
+                alert('El carrito está vacío');
+                return;
             }
-            
-            return minutosTrabajados / 60; // Convertir minutos a horas en formato decimal
-        }
 
-         // Función para convertir hh:mm a decimal SOLO SI ESTÁ ENTRE 18:00 y 05:00
-         function convertirHorasADecimal(horasMinutos) {
-            if (!horasMinutos) return 0;
-            const partes = horasMinutos.split(":");
-            if (partes.length !== 2) return 0;
+            const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const total = subtotal - descuentoAplicado;
 
-            const horas = parseInt(partes[0], 10);
-            const minutos = parseInt(partes[1], 10);
+            const embedPedido = {
+                content: `${ROLES}`,
+                embeds: [{
+                    title: "🍔 Nuevo Pedido",
+                    color: 0xFFD700,
+                    fields: [
+                        { name: "👤 Cliente", value: nombre, inline: true },
+                        { name: "📍 Dirección", value: direccion, inline: true },
+                        { name: "📞 Teléfono", value: telefono || "No proporcionado", inline: true },
+                        { name: "📝 Nota", value: nota || "Sin nota", inline: false },
+                        { name: "🛒 Productos", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: "Wigwam Burger" }
+                }]
+            };
 
-            if (isNaN(horas) || isNaN(minutos)) return 0;
+            const embedFactura = {
+                embeds: [{
+                    title: "📄 Factura",
+                    color: 0x00CC00,
+                    fields: [
+                        { name: "👤 Cliente", value: nombre, inline: true },
+                        { name: "🆔 N° Pedido", value: `${Date.now()}`, inline: true },
+                        { name: "🛒 Desglose", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: "💵 Total a Pagar", value: `$${total.toFixed(2)}`, inline: true }
+                    ],
+                    timestamp: new Date(),
+                    footer: { text: "Wigwam Burger" }
+                }]
+            };
 
-            const tiempoEnDecimal = horas + minutos / 60;
+            const enviarMensaje = (url, embed) => {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(embed)
+                });
+            };
 
-            // Solo sumar si está entre 18:00 y 05:00
-            if ((horas >= 18 && horas <= 23) || (horas >= 0 && horas < 5)) {
-                return tiempoEnDecimal;
-            }
-            return 0;
-        }
-
-
-        // Función para convertir decimal a formato hh:mm
-        function formatearDecimalAHoras(decimal) {
-            const horas = Math.floor(decimal);
-            const minutos = Math.round((decimal - horas) * 60);
-            return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+            Promise.all([
+                enviarMensaje(webhookUrlPedido, embedPedido),
+                enviarMensaje(webhookUrlFactura, embedFactura)
+            ])
+                .then(responses => {
+                    if (responses.every(r => r.ok)) {
+                        alert('Pedido realizado con éxito');
+                        carrito = [];
+                        descuentoAplicado = 0;
+                        codigoActivo = null;
+                        actualizarCarrito();
+                        document.getElementById('nombre-modal').value = '';
+                        document.getElementById('direccion-modal').value = '';
+                        document.getElementById('telefono-modal').value = '';
+                        document.getElementById('nota-modal').value = '';
+                        document.getElementById('codigo-descuento').value = '';
+                        cerrarModal();
+                    } else {
+                        throw new Error('Error en la respuesta del servidor');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
+                });
         }
     </script>
-    <img src="Logo_Wigwam_Burger.png" alt="Logo Wigwam" class="logo2">
 </body>
 </html>
