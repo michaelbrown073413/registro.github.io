@@ -37,19 +37,23 @@
         }
 
         body.light {
-            background: #e0e0e0; /* Gris claro suave */
-            color: #333; /* Texto gris oscuro para contraste */
+            background: #d8d8d8;
+            color: #444;
         }
 
-        body.light .producto, body.light .carrito-panel, body.light .modal-content {
-            background: #f0f0f0; /* Fondo claro pero no blanco puro */
+        body.light .producto, body.light .carrito-panel, body.light .modal-content, body.light .settings-panel {
+            background: #e8e8e8;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            border-color: #d4af37; /* Borde dorado suave */
+            border-color: #d4af37;
         }
 
         body.light .form-group input, body.light .form-group textarea {
-            background: #fafafa; /* Fondo de inputs más suave */
-            color: #333;
+            background: #f2f2f2;
+            color: #444;
+        }
+
+        body.light .cantidad-selector input {
+            background: #f2f2f2;
         }
 
         .container {
@@ -71,6 +75,9 @@
         .logo img {
             max-width: 200px;
             height: auto;
+            -webkit-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
         }
 
         .catalogo {
@@ -88,6 +95,7 @@
             box-shadow: 0 4px 8px rgba(255, 215, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
         }
 
         .producto:hover {
@@ -111,7 +119,14 @@
         .producto h3 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            color: #ffd700; /* Todos los nombres en amarillo */
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
+        .producto p {
+            margin: 5px 0;
+            height: 24px;
+            line-height: 24px;
         }
 
         .cantidad-selector {
@@ -120,6 +135,7 @@
             justify-content: center;
             gap: 10px;
             align-items: center;
+            height: 34px;
         }
 
         .cantidad-selector input {
@@ -130,6 +146,16 @@
             border: 1px solid #ffd700;
             color: #1a1a1a;
             border-radius: 4px;
+            height: 34px;
+        }
+
+        .cantidad-selector button {
+            height: 34px;
+            width: 34px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .cart-button {
@@ -145,7 +171,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
             z-index: 1000;
-            position: relative;
         }
 
         .cart-button:hover {
@@ -159,6 +184,9 @@
         .cart-button img {
             width: 30px;
             height: 30px;
+            -webkit-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
         }
 
         .cart-count {
@@ -175,18 +203,77 @@
             font-size: 12px;
         }
 
-        .theme-toggle {
+        .settings-button {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #ffd700;
+            background: #1a1a1a;
+            border: 1px solid #ffd700;
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            border: none;
             cursor: pointer;
             z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .settings-button i {
+            color: #ffd700;
             font-size: 20px;
+        }
+
+        .settings-button:hover {
+            transform: scale(1.1);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 200px;
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .settings-panel.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .settings-panel h3 {
+            color: #ffd700;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .settings-panel a {
+            display: block;
+            margin-top: 10px;
+            background: linear-gradient(45deg, #7289da, #5865f2);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .settings-panel a:hover {
+            filter: brightness(1.1);
         }
 
         .carrito-panel {
@@ -346,8 +433,8 @@
         }
 
         body.light .success-panel {
-            background: #f0f0f0;
-            color: #333;
+            background: #e8e8e8;
+            color: #444;
         }
 
         .success-panel i {
@@ -374,6 +461,14 @@
             font-size: 0.9em;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
             z-index: 998;
+        }
+
+        .cart-fly {
+            position: fixed; /* Cambiado a fixed para coordenadas absolutas */
+            width: 50px;
+            height: 50px;
+            z-index: 1001;
+            pointer-events: none; /* Evitar interacción */
         }
 
         @media (max-width: 768px) {
@@ -427,12 +522,17 @@
                 height: 25px;
             }
 
-            .theme-toggle {
+            .settings-button {
                 top: 10px;
                 right: 10px;
                 width: 35px;
                 height: 35px;
-                font-size: 18px;
+            }
+
+            .settings-panel {
+                top: 55px;
+                right: 10px;
+                width: 180px;
             }
 
             .modal {
@@ -496,59 +596,59 @@
     </header>
 
     <div class="container">
-        <section class="catalogo">
+        <section class="catalogo" id="catalogo">
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/xxl.png" alt="Hamburguesa XXL">
-                <h3>Hamburguesa XXL</h3>
+                <h3 data-es="Hamburguesa XXL" data-en="XXL Burger">Hamburguesa XXL</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-hamburguesa-xxl" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Hamburguesa XXL', 15, 'cant-hamburguesa-xxl')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Hamburguesa XXL', 15, 'cant-hamburguesa-xxl', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/ternera.png" alt="Hamburguesa de Ternera">
-                <h3>Hamburguesa de Ternera</h3>
+                <h3 data-es="Hamburguesa de Ternera" data-en="Beef Burger">Hamburguesa de Ternera</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-hamburguesa-ternera" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Hamburguesa de Ternera', 15, 'cant-hamburguesa-ternera')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Hamburguesa de Ternera', 15, 'cant-hamburguesa-ternera', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/perrito.png" alt="Perrito Caliente">
-                <h3>Perrito Caliente</h3>
+                <h3 data-es="Perrito Caliente" data-en="Hot Dog">Perrito Caliente</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-perrito" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Perrito Caliente', 15, 'cant-perrito')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Perrito Caliente', 15, 'cant-perrito', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/Batido_de_fresa.png" alt="Batido de Fresa">
-                <h3>Batido de Fresa</h3>
+                <h3 data-es="Batido de Fresa" data-en="Strawberry Milkshake">Batido de Fresa</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-batido-fresa" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Batido de Fresa', 15, 'cant-batido-fresa')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Batido de Fresa', 15, 'cant-batido-fresa', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/limonada.png" alt="Refresco de Limon">
-                <h3>Refresco de Limon</h3>
+                <h3 data-es="Refresco de Limon" data-en="Lemon Soda">Refresco de Limon</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-refresco-limon" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Refresco de Limon', 15, 'cant-refresco-limon')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Refresco de Limon', 15, 'cant-refresco-limon', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="producto">
                 <img src="https://r2.fivemanage.com/O5yfhtPtAV4DBIWUnbt2S/image/Gaseosa.png" alt="Gaseosa">
-                <h3>Gaseosa</h3>
+                <h3 data-es="Gaseosa" data-en="Soda">Gaseosa</h3>
                 <p>$15.00</p>
                 <div class="cantidad-selector">
                     <input type="number" id="cant-gaseosa" min="1" value="1">
-                    <button onclick="agregarAlCarrito('Gaseosa', 15, 'cant-gaseosa')"><i class="fas fa-plus"></i></button>
+                    <button onclick="agregarAlCarrito('Gaseosa', 15, 'cant-gaseosa', this)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         </section>
@@ -558,62 +658,77 @@
             <span id="cart-count" class="cart-count">0</span>
         </button>
 
-        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        <button class="settings-button" onclick="toggleSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
+
+        <div class="settings-panel" id="settings-panel">
+            <h3 data-es="Ajustes" data-en="Settings">Ajustes</h3>
+            <label>
+                <input type="checkbox" id="theme-toggle" onchange="toggleTheme()"> 
+                <span data-es="Modo Claro" data-en="Light Mode">Modo Claro</span>
+            </label>
+            <label>
+                <input type="checkbox" id="lang-toggle" onchange="toggleLanguage()"> 
+                <span data-es="Inglés" data-en="English">Inglés</span>
+            </label>
+            <a href="https://discord.gg/QeKpgDHSh5" target="_blank" data-es="Unirse a Discord" data-en="Join Discord">Unirse a Discord</a>
+        </div>
 
         <div class="carrito-panel" id="carrito-panel">
-            <h2>Carrito de Compras</h2>
+            <h2 data-es="Carrito de Compras" data-en="Shopping Cart">Carrito de Compras</h2>
             <div id="lista-carrito"></div>
             <div class="form-group">
-                <label>Código de Descuento:</label>
-                <input type="text" id="codigo-descuento" placeholder="Ingresa el código">
-                <button onclick="aplicarDescuento()">Aplicar</button>
+                <label data-es="Código de Descuento:" data-en="Discount Code:">Código de Descuento:</label>
+                <input type="text" id="codigo-descuento" data-es-placeholder="Ingresa el código" data-en-placeholder="Enter the code">
+                <button onclick="aplicarDescuento()" data-es="Aplicar" data-en="Apply">Aplicar</button>
             </div>
-            <p>Subtotal: $<span id="subtotal">0.00</span></p>
-            <p>Descuento: $<span id="descuento">0.00</span></p>
-            <p>Total: $<span id="total">0.00</span></p>
+            <p data-es="Subtotal: $" data-en="Subtotal: $">Subtotal: $<span id="subtotal">0.00</span></p>
+            <p data-es="Descuento: $" data-en="Discount: $">Descuento: $<span id="descuento">0.00</span></p>
+            <p data-es="Total: $" data-en="Total: $">Total: $<span id="total">0.00</span></p>
             <div id="formulario-entrega">
-                <h2>Detalles de Entrega</h2>
+                <h2 data-es="Detalles de Entrega" data-en="Delivery Details">Detalles de Entrega</h2>
                 <div class="form-group">
-                    <label for="nombre">Nombre:</label>
+                    <label for="nombre" data-es="Nombre:" data-en="Name:">Nombre:</label>
                     <input type="text" id="nombre" required>
                 </div>
                 <div class="form-group">
-                    <label for="direccion">Dirección de Entrega:</label>
+                    <label for="direccion" data-es="Dirección de Entrega:" data-en="Delivery Address:">Dirección de Entrega:</label>
                     <input type="text" id="direccion" required>
                 </div>
                 <div class="form-group">
-                    <label for="telefono">Teléfono (opcional):</label>
+                    <label for="telefono" data-es="Teléfono (opcional):" data-en="Phone (optional):">Teléfono (opcional):</label>
                     <input type="tel" id="telefono">
                 </div>
                 <div class="form-group">
-                    <label for="nota">Nota (opcional):</label>
+                    <label for="nota" data-es="Nota (opcional):" data-en="Note (optional):">Nota (opcional):</label>
                     <textarea id="nota" rows="3"></textarea>
                 </div>
-                <button id="confirmar-pedido" onclick="enviarPedido()">Confirmar Pedido</button>
+                <button id="confirmar-pedido" onclick="enviarPedido()" data-es="Confirmar Pedido" data-en="Confirm Order">Confirmar Pedido</button>
             </div>
         </div>
 
         <div id="modal" class="modal">
             <div class="modal-content">
-                <h2>Detalles de Entrega</h2>
+                <h2 data-es="Detalles de Entrega" data-en="Delivery Details">Detalles de Entrega</h2>
                 <div class="form-group">
-                    <label for="nombre-modal">Nombre:</label>
+                    <label for="nombre-modal" data-es="Nombre:" data-en="Name:">Nombre:</label>
                     <input type="text" id="nombre-modal" required>
                 </div>
                 <div class="form-group">
-                    <label for="direccion-modal">Dirección de Entrega:</label>
+                    <label for="direccion-modal" data-es="Dirección de Entrega:" data-en="Delivery Address:">Dirección de Entrega:</label>
                     <input type="text" id="direccion-modal" required>
                 </div>
                 <div class="form-group">
-                    <label for="telefono-modal">Teléfono (opcional):</label>
+                    <label for="telefono-modal" data-es="Teléfono (opcional):" data-en="Phone (optional):">Teléfono (opcional):</label>
                     <input type="tel" id="telefono-modal">
                 </div>
                 <div class="form-group">
-                    <label for="nota-modal">Nota (opcional):</label>
+                    <label for="nota-modal" data-es="Nota (opcional):" data-en="Note (optional):">Nota (opcional):</label>
                     <textarea id="nota-modal" rows="3"></textarea>
                 </div>
-                <button onclick="enviarPedidoDesdeModal()">Confirmar Pedido</button>
-                <button onclick="cerrarModal()" style="background-color: #666; margin-left: 10px;">Cancelar</button>
+                <button onclick="enviarPedidoDesdeModal()" data-es="Confirmar Pedido" data-en="Confirm Order">Confirmar Pedido</button>
+                <button onclick="cerrarModal()" style="background-color: #666; margin-left: 10px;" data-es="Cancelar" data-en="Cancel">Cancelar</button>
             </div>
         </div>
 
@@ -623,18 +738,18 @@
 
         <div class="success-panel" id="success-panel">
             <i class="fas fa-check-circle"></i>
-            <h2>¡Pedido Exitoso!</h2>
-            <p>Tu pedido ha sido procesado correctamente.</p>
-            <button onclick="cerrarSuccessPanel()" style="margin-top: 20px;">Volver a comprar</button>
+            <h2 data-es="¡Pedido Exitoso!" data-en="Order Successful!">¡Pedido Exitoso!</h2>
+            <p data-es="Tu pedido ha sido procesado correctamente." data-en="Your order has been processed successfully.">Tu pedido ha sido procesado correctamente.</p>
+            <button onclick="cerrarSuccessPanel()" style="margin-top: 20px;" data-es="Volver a comprar" data-en="Back to shopping">Volver a comprar</button>
         </div>
     </div>
 
     <footer>
-        <p>🍔 Wigwam Burger - ¡Sabor que te hace feliz! 🍔</p>
+        <p>🍔 Wigwam Burger - <span data-es="¡Sabor que te hace feliz!" data-en="Flavor that makes you happy!">¡Sabor que te hace feliz!</span> 🍔</p>
     </footer>
 
     <script>
-        let carrito = [];
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
         const webhookUrlPedido = 'https://discord.com/api/webhooks/1340438328872407144/8rzawWcU3QmRfSAqFB9rcNz-WbBu0Oxp3hy5V4iCFdkI8meQAJzq7waYK0Vd6yH2etjD';
         const webhookUrlFactura = 'https://discord.com/api/webhooks/1350600154507382905/AsBtpWVUMkcAnCTQQ7WDb7GavKmig33Wsho8Tccjhtp-B9P6C4pS8XY1tVPh7g330jkT';
         let descuentoAplicado = 0;
@@ -642,12 +757,13 @@
         const CODIGO_DESCUENTO_10 = '5567243';
         const CODIGO_DESCUENTO_5 = '9867512';
         const ROLES = '<@&1334330406568464404> <@&1332730297745281076>';
+        let currentLang = 'es';
 
-        function agregarAlCarrito(nombre, precio, inputId) {
+        function agregarAlCarrito(nombre, precio, inputId, button) {
             const input = document.getElementById(inputId);
             const cantidad = parseInt(input.value) || 1;
             if (cantidad <= 0 || isNaN(cantidad)) {
-                alert('Por favor, ingresa una cantidad válida');
+                alert(currentLang === 'es' ? 'Por favor, ingresa una cantidad válida' : 'Please enter a valid quantity');
                 input.value = 1;
                 return;
             }
@@ -658,16 +774,41 @@
             } else {
                 carrito.push({ nombre, precio, cantidad });
             }
+            localStorage.setItem('carrito', JSON.stringify(carrito));
             input.value = 1;
             actualizarCarrito();
 
             const cartButton = document.querySelector('.cart-button');
             cartButton.classList.add('bounce');
             setTimeout(() => cartButton.classList.remove('bounce'), 500);
+
+            const producto = button.closest('.producto');
+            const img = producto.querySelector('img');
+            const flyImg = img.cloneNode(true);
+            flyImg.className = 'cart-fly';
+            const imgRect = img.getBoundingClientRect();
+            const cartRect = cartButton.getBoundingClientRect();
+            flyImg.style.top = `${imgRect.top}px`;
+            flyImg.style.left = `${imgRect.left}px`;
+            document.body.appendChild(flyImg);
+
+            // Calcular la distancia al botón del carrito
+            const deltaX = cartRect.left - imgRect.left + (cartRect.width / 2 - 25); // Ajustar al centro
+            const deltaY = cartRect.top - imgRect.top + (cartRect.height / 2 - 25);
+            flyImg.animate([
+                { transform: 'scale(1)', opacity: 1 },
+                { transform: `translate(${deltaX}px, ${deltaY}px) scale(0.3)`, opacity: 0 }
+            ], {
+                duration: 800,
+                easing: 'ease-in-out',
+                fill: 'forwards'
+            });
+            setTimeout(() => flyImg.remove(), 800);
         }
 
         function eliminarDelCarrito(nombre) {
             carrito = carrito.filter(item => item.nombre !== nombre);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
             actualizarCarrito();
         }
 
@@ -706,7 +847,7 @@
             subtotalElement.textContent = subtotal.toFixed(2);
             descuentoElement.textContent = descuentoAplicado.toFixed(2);
             totalElement.textContent = total.toFixed(2);
-            cartCount.textContent = totalItems;
+            cartCount.textContent = totalItems || 0;
         }
 
         function aplicarDescuento() {
@@ -714,29 +855,48 @@
             const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
             
             if (!subtotal) {
-                alert('El carrito está vacío. Añade productos antes de aplicar un descuento.');
+                alert(currentLang === 'es' ? 'El carrito está vacío. Añade productos antes de aplicar un descuento.' : 'The cart is empty. Add products before applying a discount.');
                 return;
             }
 
             if (codigo === CODIGO_DESCUENTO_10) {
                 codigoActivo = CODIGO_DESCUENTO_10;
                 descuentoAplicado = subtotal * 0.10;
-                alert('¡Código aplicado! 10% de descuento');
+                alert(currentLang === 'es' ? '¡Código aplicado! 10% de descuento' : 'Code applied! 10% discount');
             } else if (codigo === CODIGO_DESCUENTO_5) {
                 codigoActivo = CODIGO_DESCUENTO_5;
                 descuentoAplicado = subtotal * 0.05;
-                alert('¡Código aplicado! 5% de descuento');
+                alert(currentLang === 'es' ? '¡Código aplicado! 5% de descuento' : 'Code applied! 5% discount');
             } else {
                 codigoActivo = null;
                 descuentoAplicado = 0;
-                alert('Código inválido');
+                alert(currentLang === 'es' ? 'Código inválido' : 'Invalid code');
             }
             actualizarCarrito();
         }
 
         function toggleCarrito() {
             const carritoPanel = document.getElementById('carrito-panel');
+            const settingsPanel = document.getElementById('settings-panel');
+            const settingsButton = document.querySelector('.settings-button');
             carritoPanel.classList.toggle('active');
+            if (carritoPanel.classList.contains('active')) {
+                settingsPanel.classList.remove('active');
+                settingsButton.style.display = 'none';
+            } else {
+                setTimeout(() => {
+                    settingsButton.style.display = 'flex';
+                }, 300);
+            }
+        }
+
+        function toggleSettings() {
+            const settingsPanel = document.getElementById('settings-panel');
+            const carritoPanel = document.getElementById('carrito-panel');
+            settingsPanel.classList.toggle('active');
+            if (settingsPanel.classList.contains('active')) {
+                carritoPanel.classList.remove('active');
+            }
         }
 
         function cerrarModal() {
@@ -746,18 +906,49 @@
         function toggleTheme() {
             document.body.classList.toggle('light');
             localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
-            document.querySelector('.theme-toggle').textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+            document.getElementById('theme-toggle').checked = document.body.classList.contains('light');
         }
 
-        if (localStorage.getItem('theme') === 'light') toggleTheme();
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            localStorage.setItem('lang', currentLang);
+            document.getElementById('lang-toggle').checked = currentLang === 'en';
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-es]').forEach(element => {
+                const key = currentLang === 'es' ? 'es' : 'en';
+                if (element.tagName === 'INPUT' && element.hasAttribute('data-es-placeholder')) {
+                    element.placeholder = element.getAttribute(`data-${key}-placeholder`);
+                } else if (element.tagName === 'BUTTON') {
+                    element.textContent = element.getAttribute(`data-${key}`);
+                } else {
+                    element.textContent = element.getAttribute(`data-${key}`);
+                }
+            });
+            document.documentElement.lang = currentLang;
+        }
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light');
+            document.getElementById('theme-toggle').checked = true;
+        }
+        if (localStorage.getItem('lang') === 'en') {
+            currentLang = 'en';
+            document.getElementById('lang-toggle').checked = true;
+            updateLanguage();
+        }
 
         function cerrarSuccessPanel() {
             document.getElementById('success-panel').style.display = 'none';
+            document.querySelector('.settings-button').style.display = 'flex';
         }
 
         function mostrarSuccessPanel() {
             document.getElementById('carrito-panel').classList.remove('active');
             document.getElementById('success-panel').style.display = 'block';
+            document.getElementById('loading').style.display = 'none'; // Asegurar que loading se oculte
         }
 
         function enviarPedido() {
@@ -767,12 +958,12 @@
             const nota = document.getElementById('nota').value.trim();
 
             if (!nombre || !direccion) {
-                alert('Por favor, completa los campos obligatorios (Nombre y Dirección)');
+                alert(currentLang === 'es' ? 'Por favor, completa los campos obligatorios (Nombre y Dirección)' : 'Please fill in the required fields (Name and Address)');
                 return;
             }
 
             if (carrito.length === 0) {
-                alert('El carrito está vacío');
+                alert(currentLang === 'es' ? 'El carrito está vacío' : 'The cart is empty');
                 return;
             }
 
@@ -784,36 +975,36 @@
             const embedPedido = {
                 content: `${ROLES}`,
                 embeds: [{
-                    title: "🍔 Nuevo Pedido",
+                    title: currentLang === 'es' ? "🍔 Nuevo Pedido" : "🍔 New Order",
                     color: 0xFFD700,
                     fields: [
-                        { name: "👤 Cliente", value: nombre, inline: true },
-                        { name: "📍 Dirección", value: direccion, inline: true },
-                        { name: "📞 Teléfono", value: telefono || "No proporcionado", inline: true },
-                        { name: "📝 Nota", value: nota || "Sin nota", inline: false },
-                        { name: "🛒 Productos", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
-                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
-                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
-                        { name: "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
+                        { name: currentLang === 'es' ? "👤 Cliente" : "👤 Customer", value: nombre, inline: true },
+                        { name: currentLang === 'es' ? "📍 Dirección" : "📍 Address", value: direccion, inline: true },
+                        { name: currentLang === 'es' ? "📞 Teléfono" : "📞 Phone", value: telefono || (currentLang === 'es' ? "No proporcionado" : "Not provided"), inline: true },
+                        { name: currentLang === 'es' ? "📝 Nota" : "📝 Note", value: nota || (currentLang === 'es' ? "Sin nota" : "No note"), inline: false },
+                        { name: currentLang === 'es' ? "🛒 Productos" : "🛒 Products", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: currentLang === 'es' ? "💰 Subtotal" : "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "🎁 Descuento" : "🎁 Discount", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "💵 Total" : "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
                     ],
-                    timestamp: new Date(),
+                    timestamp: new Date().toISOString(),
                     footer: { text: "Wigwam Burger" }
                 }]
             };
 
             const embedFactura = {
                 embeds: [{
-                    title: "📄 Factura",
+                    title: currentLang === 'es' ? "📄 Factura" : "📄 Invoice",
                     color: 0x00CC00,
                     fields: [
-                        { name: "👤 Cliente", value: nombre, inline: true },
-                        { name: "🆔 N° Pedido", value: `${Date.now()}`, inline: true },
-                        { name: "🛒 Desglose", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
-                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
-                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
-                        { name: "💵 Total a Pagar", value: `$${total.toFixed(2)}`, inline: true }
+                        { name: currentLang === 'es' ? "👤 Cliente" : "👤 Customer", value: nombre, inline: true },
+                        { name: currentLang === 'es' ? "🆔 N° Pedido" : "🆔 Order No.", value: `${Date.now()}`, inline: true },
+                        { name: currentLang === 'es' ? "🛒 Desglose" : "🛒 Breakdown", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: currentLang === 'es' ? "💰 Subtotal" : "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "🎁 Descuento" : "🎁 Discount", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "💵 Total a Pagar" : "💵 Total to Pay", value: `$${total.toFixed(2)}`, inline: true }
                     ],
-                    timestamp: new Date(),
+                    timestamp: new Date().toISOString(),
                     footer: { text: "Wigwam Burger" }
                 }]
             };
@@ -823,6 +1014,9 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(embed)
+                }).then(response => {
+                    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+                    return response;
                 });
             };
 
@@ -830,29 +1024,25 @@
                 enviarMensaje(webhookUrlPedido, embedPedido),
                 enviarMensaje(webhookUrlFactura, embedFactura)
             ])
-                .then(responses => {
-                    if (responses.every(r => r.ok)) {
-                        setTimeout(() => {
-                            document.getElementById('loading').style.display = 'none';
-                            carrito = [];
-                            descuentoAplicado = 0;
-                            codigoActivo = null;
-                            actualizarCarrito();
-                            document.getElementById('nombre').value = '';
-                            document.getElementById('direccion').value = '';
-                            document.getElementById('telefono').value = '';
-                            document.getElementById('nota').value = '';
-                            document.getElementById('codigo-descuento').value = '';
-                            mostrarSuccessPanel();
-                        }, 5000); // 5 segundos de carga
-                    } else {
-                        throw new Error('Error en la respuesta del servidor');
-                    }
+                .then(() => {
+                    setTimeout(() => {
+                        carrito = [];
+                        localStorage.setItem('carrito', JSON.stringify(carrito));
+                        descuentoAplicado = 0;
+                        codigoActivo = null;
+                        actualizarCarrito();
+                        document.getElementById('nombre').value = '';
+                        document.getElementById('direccion').value = '';
+                        document.getElementById('telefono').value = '';
+                        document.getElementById('nota').value = '';
+                        document.getElementById('codigo-descuento').value = '';
+                        mostrarSuccessPanel();
+                    }, 2000); // Reducido a 2 segundos para mejor experiencia
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error al enviar el pedido:', error);
                     document.getElementById('loading').style.display = 'none';
-                    alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
+                    alert(currentLang === 'es' ? 'Error al realizar el pedido. Por favor, intenta de nuevo.' : 'Error processing the order. Please try again.');
                 });
         }
 
@@ -863,12 +1053,12 @@
             const nota = document.getElementById('nota-modal').value.trim();
 
             if (!nombre || !direccion) {
-                alert('Por favor, completa los campos obligatorios (Nombre y Dirección)');
+                alert(currentLang === 'es' ? 'Por favor, completa los campos obligatorios (Nombre y Dirección)' : 'Please fill in the required fields (Name and Address)');
                 return;
             }
 
             if (carrito.length === 0) {
-                alert('El carrito está vacío');
+                alert(currentLang === 'es' ? 'El carrito está vacío' : 'The cart is empty');
                 return;
             }
 
@@ -880,36 +1070,36 @@
             const embedPedido = {
                 content: `${ROLES}`,
                 embeds: [{
-                    title: "🍔 Nuevo Pedido",
+                    title: currentLang === 'es' ? "🍔 Nuevo Pedido" : "🍔 New Order",
                     color: 0xFFD700,
                     fields: [
-                        { name: "👤 Cliente", value: nombre, inline: true },
-                        { name: "📍 Dirección", value: direccion, inline: true },
-                        { name: "📞 Teléfono", value: telefono || "No proporcionado", inline: true },
-                        { name: "📝 Nota", value: nota || "Sin nota", inline: false },
-                        { name: "🛒 Productos", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
-                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
-                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
-                        { name: "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
+                        { name: currentLang === 'es' ? "👤 Cliente" : "👤 Customer", value: nombre, inline: true },
+                        { name: currentLang === 'es' ? "📍 Dirección" : "📍 Address", value: direccion, inline: true },
+                        { name: currentLang === 'es' ? "📞 Teléfono" : "📞 Phone", value: telefono || (currentLang === 'es' ? "No proporcionado" : "Not provided"), inline: true },
+                        { name: currentLang === 'es' ? "📝 Nota" : "📝 Note", value: nota || (currentLang === 'es' ? "Sin nota" : "No note"), inline: false },
+                        { name: currentLang === 'es' ? "🛒 Productos" : "🛒 Products", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: currentLang === 'es' ? "💰 Subtotal" : "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "🎁 Descuento" : "🎁 Discount", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "💵 Total" : "💵 Total", value: `$${total.toFixed(2)}`, inline: true }
                     ],
-                    timestamp: new Date(),
+                    timestamp: new Date().toISOString(),
                     footer: { text: "Wigwam Burger" }
                 }]
             };
 
             const embedFactura = {
                 embeds: [{
-                    title: "📄 Factura",
+                    title: currentLang === 'es' ? "📄 Factura" : "📄 Invoice",
                     color: 0x00CC00,
                     fields: [
-                        { name: "👤 Cliente", value: nombre, inline: true },
-                        { name: "🆔 N° Pedido", value: `${Date.now()}`, inline: true },
-                        { name: "🛒 Desglose", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
-                        { name: "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
-                        { name: "🎁 Descuento", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
-                        { name: "💵 Total a Pagar", value: `$${total.toFixed(2)}`, inline: true }
+                        { name: currentLang === 'es' ? "👤 Cliente" : "👤 Customer", value: nombre, inline: true },
+                        { name: currentLang === 'es' ? "🆔 N° Pedido" : "🆔 Order No.", value: `${Date.now()}`, inline: true },
+                        { name: currentLang === 'es' ? "🛒 Desglose" : "🛒 Breakdown", value: carrito.map(item => `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n'), inline: false },
+                        { name: currentLang === 'es' ? "💰 Subtotal" : "💰 Subtotal", value: `$${subtotal.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "🎁 Descuento" : "🎁 Discount", value: `$${descuentoAplicado.toFixed(2)}`, inline: true },
+                        { name: currentLang === 'es' ? "💵 Total a Pagar" : "💵 Total to Pay", value: `$${total.toFixed(2)}`, inline: true }
                     ],
-                    timestamp: new Date(),
+                    timestamp: new Date().toISOString(),
                     footer: { text: "Wigwam Burger" }
                 }]
             };
@@ -919,6 +1109,9 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(embed)
+                }).then(response => {
+                    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+                    return response;
                 });
             };
 
@@ -926,32 +1119,33 @@
                 enviarMensaje(webhookUrlPedido, embedPedido),
                 enviarMensaje(webhookUrlFactura, embedFactura)
             ])
-                .then(responses => {
-                    if (responses.every(r => r.ok)) {
-                        setTimeout(() => {
-                            document.getElementById('loading').style.display = 'none';
-                            carrito = [];
-                            descuentoAplicado = 0;
-                            codigoActivo = null;
-                            actualizarCarrito();
-                            document.getElementById('nombre-modal').value = '';
-                            document.getElementById('direccion-modal').value = '';
-                            document.getElementById('telefono-modal').value = '';
-                            document.getElementById('nota-modal').value = '';
-                            document.getElementById('codigo-descuento').value = '';
-                            cerrarModal();
-                            mostrarSuccessPanel();
-                        }, 5000); // 5 segundos de carga
-                    } else {
-                        throw new Error('Error en la respuesta del servidor');
-                    }
+                .then(() => {
+                    setTimeout(() => {
+                        carrito = [];
+                        localStorage.setItem('carrito', JSON.stringify(carrito));
+                        descuentoAplicado = 0;
+                        codigoActivo = null;
+                        actualizarCarrito();
+                        document.getElementById('nombre-modal').value = '';
+                        document.getElementById('direccion-modal').value = '';
+                        document.getElementById('telefono-modal').value = '';
+                        document.getElementById('nota-modal').value = '';
+                        document.getElementById('codigo-descuento').value = '';
+                        cerrarModal();
+                        mostrarSuccessPanel();
+                    }, 2000);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error al enviar el pedido:', error);
                     document.getElementById('loading').style.display = 'none';
-                    alert('Error al realizar el pedido. Por favor, intenta de nuevo.');
+                    alert(currentLang === 'es' ? 'Error al realizar el pedido. Por favor, intenta de nuevo.' : 'Error processing the order. Please try again.');
                 });
         }
+
+        window.addEventListener('load', () => {
+            actualizarCarrito();
+            document.querySelector('.settings-button').style.display = 'flex';
+        });
     </script>
 </body>
 </html>
